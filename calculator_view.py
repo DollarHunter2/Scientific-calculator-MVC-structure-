@@ -56,7 +56,7 @@ class CalculatorView:
         add_btn = lambda text, cmd, r, c: tk.Button(self.root, text=text, command=cmd, **self.button_params).grid(row=r, column=c, sticky="nsew")
 
         # 1st row
-        add_btn('', lambda: self.controller.on_button_click('abs('), 1, 0)
+        add_btn('abs', lambda: self.controller.on_button_click('abs('), 1, 0)
         add_btn('mod', lambda: self.controller.on_button_click('%'), 1, 1)
         add_btn('div', lambda: self.controller.on_button_click('//'), 1, 2)
         add_btn('x!', self.controller.on_factorial, 1, 3)
@@ -70,18 +70,18 @@ class CalculatorView:
         add_btn('π', lambda: self.controller.on_button_click(str(3.14159)), 2, 4)
 
         # 3rd row
-        add_btn('x²', lambda: self.controller.on_button_click('**2'), 3, 0)
-        add_btn('x³', lambda: self.controller.on_button_click('**3'), 3, 1)
-        add_btn('xⁿ', lambda: self.controller.on_button_click('**'), 3, 2)
-        add_btn('x⁻¹', lambda: self.controller.on_button_click('**(-1)'), 3, 3)
-        add_btn('10^x', lambda: self.controller.on_button_click('10**'), 3, 4)
+        add_btn('x²', lambda: self.controller.raise_power(2), 3, 0)
+        add_btn('x³', lambda: self.controller.raise_power(3), 3, 1)
+        add_btn('xⁿ', lambda: self.controller.raise_power_dynamic(), 3, 2) #ask user for n
+        add_btn('x⁻¹', lambda: self.controller.raise_power(-1), 3, 3)
+        add_btn('10^x', lambda: self.controller.ten_power(), 3, 4)
 
         # 4th row
-        add_btn('√', self.controller.on_sqrt, 4, 0)
-        add_btn('³√', self.controller.on_cuberoot, 4, 1)
-        add_btn('ⁿ√', lambda: self.controller.on_button_click('**(1/'), 4, 2)
-        add_btn('log₁₀', lambda: self.controller.on_button_click('math.log10('), 4, 3)
-        add_btn('ln', lambda: self.controller.on_button_click('math.log('), 4, 4)
+        add_btn('√',  lambda: self.controller.raise_power(0.5), 4, 0)
+        add_btn('³√',lambda: self.controller.raise_power(1/3), 4, 1)
+        add_btn('ⁿ√', lambda: self.controller.nth_root_dynamic(), 4, 2)
+        add_btn('log₁₀', lambda: self.controller.log10(), 4, 3)
+        add_btn('ln', lambda: self.controller.ln(), 4, 4)
 
         # 5th row
         add_btn('(', lambda: self.controller.on_button_click('('), 5, 0)
@@ -98,8 +98,8 @@ class CalculatorView:
              
     ('0', 9, 0),
     ('.', 9, 1),
-    ('C-K', 9, 2),
-    ("K-C",9,3),
+    ('°C-K', 9, 2),
+    ("K-°C",9,3),
     ('=', 9, 4),
     
 
@@ -112,8 +112,10 @@ class CalculatorView:
                 cmd = self.controller.on_delete
             elif text == '=':
                 cmd = self.controller.on_equal
-            elif text == "C-K":
+            elif text == "°C-K":
                 cmd = self.controller.temp_convert1
+            elif text =="K-°C":
+                cmd = self.controller.temp_convert2
             else:
                 cmd = lambda t=text: self.controller.on_button_click(t)
             tk.Button(self.root, text=text, command=cmd, **self.button_params_main).grid(row=row, column=col, sticky="nsew")
@@ -123,4 +125,3 @@ class CalculatorView:
         """Updates the display with the given value"""
         self.text_input.set(value)
         self.display.xview_moveto(1)
-
