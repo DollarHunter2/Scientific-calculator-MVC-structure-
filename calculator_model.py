@@ -5,32 +5,27 @@ class CalculatorModel:
         self.expression = ""
 
     def add_to_expression(self, char):
-        """Add a character to the current expression"""
         self.expression += str(char)
         return self.expression
 
     def clear_all(self):
-        """Clear everything"""
         self.expression = ""
+        self.result=""
         return self.expression
 
     def delete_last(self):
-        """Delete last character"""
         self.expression = self.expression[:-1]
         return self.expression
 
     def evaluate(self):
-        """Evaluate the full expression"""
         try:
             result = str(eval(self.expression))
-            self.expression = result
+            return result
         except Exception:
-            result = "ERROR"
             self.expression = ""
-        return result
+            return "ERROR"
 
     def factorial(self):
-        """Calculate factorial of current number"""
         try:
             value = int(self.expression)
             result = str(math.factorial(value))
@@ -51,7 +46,7 @@ class CalculatorModel:
 
     def trig_cot(self):
         try:
-            val = math.radians(int(self.expression))
+            val = math.radians(float(self.expression))
             result = str(1 / math.tan(val))
             self.expression = result
             return result
@@ -60,9 +55,8 @@ class CalculatorModel:
             return "ERROR"
 
     def _trig_func(self, func):
-        """Helper for sin, cos, tan"""
         try:
-            val = math.radians(int(self.expression))
+            val = math.radians(float(self.expression))
             result = str(func(val))
             self.expression = result
             return result
@@ -77,7 +71,6 @@ class CalculatorModel:
         return self._root_func(3)
 
     def _root_func(self, n):
-        """Find n-th root of expression"""
         try:
             val = float(self.expression)
             if val < 0:
@@ -103,10 +96,9 @@ class CalculatorModel:
             return result
         except Exception:
             self.expression = ""
-            return "ERROR"  
-        
+            return "ERROR"
+
     def celsius_to_kelvin(self):
-        """Convert Celsius to Kelvin"""
         try:
             val = float(self.expression)
             result = str(val + 273.15)
@@ -115,10 +107,8 @@ class CalculatorModel:
         except Exception:
             self.expression = ""
             return "ERROR"
-  
-            
+
     def kelvin_to_celsius(self):
-        """Convert Kelvin to Celsius"""
         try:
             val = float(self.expression)
             result = str(val - 273.15)

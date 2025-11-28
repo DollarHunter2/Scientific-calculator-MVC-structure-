@@ -6,91 +6,103 @@ class CalculatorView:
         self.root = root
         self.controller = controller
         self.root.title("Scientific Calculator (MVC)")
-        self.root.configure(bg="#19C6DD", bd=10)
+        self.root.configure(bg="#63EDFF", bd=10)
         self.root.resizable(False, False)
 
+        # ------------------ DISPLAY ------------------
+        self.expression_var = tk.StringVar()
+        self.result_var = tk.StringVar()
 
-        # --- Display ---
-        self.text_input = tk.StringVar()
-        self.display = tk.Entry(
-    self.root,
-    font=('sans-serif', 28, 'bold'),
-    textvariable=self.text_input,
-    bd=8,
-    insertwidth=6,
-    bg='#E0E0E0',
-    justify='right'
-)
-        self.display.grid(
-            row=0, column=0, columnspan=6,
-            padx=15, pady=25,
-            ipady=25, sticky="ew"
-        )       
-        self.display.xview_moveto(1)
+        self.expression_label = tk.Label(
+            self.root,
+            textvariable=self.expression_var,
+            font=('sans-serif', 16),
+            fg="gray",
+            anchor='w',   # top-left alignment
+            bg="#FFFFFF"
+        )
+        self.expression_label.grid(row=0, column=0, columnspan=6, sticky='ew', padx=15, pady=(15,0))
 
+        self.result_label = tk.Label(
+            self.root,
+            textvariable=self.result_var,
+            font=('sans-serif', 28, 'bold'),
+            fg='black',
+            anchor='w',  # bottom-left alignment
+            bg="#FFFFFF",
+            border=5
+        )
+        self.result_label.grid(row=1, column=0, columnspan=6, sticky='ew', padx=15, pady=(0,15))
 
-        # Button styles
+        # ------------------ GRID CONFIG ------------------
+        self.root.grid_rowconfigure(0, weight=0)  # expression label fixed
+        self.root.grid_rowconfigure(1, weight=0)  # result label fixed
+        for i in range(2, 11):  # button rows
+            self.root.grid_rowconfigure(i, weight=1)
+        for j in range(6):  # columns
+            self.root.grid_columnconfigure(j, weight=1)
+
+        # ------------------ BUTTON STYLES ------------------
         self.button_params = {'bd': 1, 'fg': "#000000", 'bg': "#6BBFE1", 'font': ('sans-serif', 20, 'italic')}
-        self.button_params_main = {'bd': 1, 'fg': '#000000', 'bg': "#057956", 'font': ('sans-serif', 20,)}
+        self.button_params_main = {'bd': 1, 'fg': '#000000', 'bg': "#43D1A6", 'font': ('sans-serif', 20)}
 
-        # Build all buttons
+        # ------------------ BUILD BUTTONS ------------------
         self.create_buttons()
+
+        # ------------------ KEYBOARD BINDINGS ------------------
+        self.root.bind("<Key>", controller.on_key_press)
+        self.root.bind("<Return>", controller.on_enter)
 
     # ------------------- BUTTON CREATION -------------------
     def create_buttons(self):
-        add_btn = lambda text, cmd, r, c: tk.Button(self.root, text=text, command=cmd, **self.button_params).grid(row=r, column=c, sticky="nsew")
+        add_btn = lambda text, cmd, r, c: tk.Button(
+            self.root, text=text, command=cmd, **self.button_params
+        ).grid(row=r, column=c, sticky="nsew", padx=2, pady=2)
 
-        # 1st row
-        add_btn('', lambda: self.controller.on_button_click('abs('), 1, 0)
-        add_btn('mod', lambda: self.controller.on_button_click('%'), 1, 1)
-        add_btn('div', lambda: self.controller.on_button_click('//'), 1, 2)
-        add_btn('x!', self.controller.on_factorial, 1, 3)
-        add_btn('e', lambda: self.controller.on_button_click(str(2.71828)), 1, 4)
+        # 1st row (row=2)
+        add_btn('abs', lambda: self.controller.on_button_click('abs('), 2, 0)
+        add_btn('mod', lambda: self.controller.on_button_click('mod'), 2, 1)
+        add_btn('div', lambda: self.controller.on_button_click('//'), 2, 2)
+        add_btn('x!', self.controller.on_factorial, 2, 3)
+        add_btn('e', lambda: self.controller.on_button_click(str(2.71828)), 2, 4)
 
-        # 2nd row
-        add_btn('sin', self.controller.on_sin, 2, 0)
-        add_btn('cos', self.controller.on_cos, 2, 1)
-        add_btn('tan', self.controller.on_tan, 2, 2)
-        add_btn('cot', self.controller.on_cot, 2, 3)
-        add_btn('π', lambda: self.controller.on_button_click(str(3.14159)), 2, 4)
+        # 2nd row (row=3)
+        add_btn('sin', self.controller.on_sin, 3, 0)
+        add_btn('cos', self.controller.on_cos, 3, 1)
+        add_btn('tan', self.controller.on_tan, 3, 2)
+        add_btn('cot', self.controller.on_cot, 3, 3)
+        add_btn('π', lambda: self.controller.on_button_click(str(3.14159)), 3, 4)
 
-        # 3rd row
-        add_btn('x²', lambda: self.controller.on_button_click('**2'), 3, 0)
-        add_btn('x³', lambda: self.controller.on_button_click('**3'), 3, 1)
-        add_btn('xⁿ', lambda: self.controller.on_button_click('**'), 3, 2)
-        add_btn('x⁻¹', lambda: self.controller.on_button_click('**(-1)'), 3, 3)
-        add_btn('10^x', lambda: self.controller.on_button_click('10**'), 3, 4)
+        # 3rd row (row=4)
+        add_btn('x²', lambda: self.controller.on_button_click("**2"), 4, 0)
+        add_btn('x³', lambda: self.controller.on_button_click("**3"), 4, 1)
+        add_btn('xⁿ', lambda: self.controller.on_button_click("**"), 4, 2)
+        add_btn('x⁻¹', lambda: self.controller.on_button_click("**(-1)"), 4, 3)
+        add_btn('10^x', lambda: self.controller.on_button_click("10**"), 4, 4)
 
-        # 4th row
-        add_btn('√', self.controller.on_sqrt, 4, 0)
-        add_btn('³√', self.controller.on_cuberoot, 4, 1)
-        add_btn('ⁿ√', lambda: self.controller.on_button_click('**(1/'), 4, 2)
-        add_btn('log₁₀', lambda: self.controller.on_button_click('math.log10('), 4, 3)
-        add_btn('ln', lambda: self.controller.on_button_click('math.log('), 4, 4)
+        # 4th row (row=5)
+        add_btn('√', self.controller.on_sqrt, 5, 0)
+        add_btn('³√', self.controller.on_cuberoot, 5, 1)
+        add_btn('ⁿ√', lambda: self.controller.on_button_click("**(1/"), 5, 2)
+        add_btn('log₁₀', lambda: self.controller.on_button_click("math.log10("), 5, 3)
+        add_btn('ln', lambda: self.controller.on_button_click("math.log("), 5, 4)
 
-        # 5th row
-        add_btn('(', lambda: self.controller.on_button_click('('), 5, 0)
-        add_btn(')', lambda: self.controller.on_button_click(')'), 5, 1)
-        add_btn('±', self.controller.on_sign_change, 5, 2)
-        add_btn('%', self.controller.on_percent, 5, 3)
-        add_btn('e^x', lambda: self.controller.on_button_click('math.exp('), 5, 4)
+        # 5th row (row=6)
+        add_btn('(', lambda: self.controller.on_button_click('('), 6, 0)
+        add_btn(')', lambda: self.controller.on_button_click(')'), 6, 1)
+        add_btn('±', self.controller.on_sign_change, 6, 2)
+        add_btn('%', self.controller.on_percent, 6, 3)
+        add_btn('e^x', lambda: self.controller.on_button_click("math.exp("), 6, 4)
 
-        # 6th to 9th rows: main keypad
+        # 6th to 9th rows: main keypad (row=7-10)
         keys = [
-            ('7',6,0), ('8',6,1), ('9',6,2), ('DEL',6,3), ('AC',6,4),
-            ('4',7,0), ('5',7,1), ('6',7,2), ('*',7,3), ('/',7,4),
-            ('1',8,0), ('2',8,1), ('3',8,2), ('+',8,3), ('-',8,4),
-             
-    ('0', 9, 0),
-    ('.', 9, 1),
-    ('C-K', 9, 2),
-    ("K-C",9,3),
-    ('=', 9, 4),
-    
-
+            ('7',7,0), ('8',7,1), ('9',7,2), ('DEL',7,3), ('AC',7,4),
+            ('4',8,0), ('5',8,1), ('6',8,2), ('*',8,3), ('/',8,4),
+            ('1',9,0), ('2',9,1), ('3',9,2), ('+',9,3), ('-',9,4),
+            ('0',10,0), ('.',10,1), ('C-K',10,2), ("K-C",10,3), ('=',10,4)
         ]
 
-        for (text, row, col) in keys:
+        for text, row, col in keys:
             if text == 'AC':
                 cmd = self.controller.on_clear
             elif text == 'DEL':
@@ -99,13 +111,16 @@ class CalculatorView:
                 cmd = self.controller.on_equal
             elif text == "C-K":
                 cmd = self.controller.temp_convert1
+            elif text == "K-C":
+                cmd = self.controller.temp_convert2
             else:
                 cmd = lambda t=text: self.controller.on_button_click(t)
-            tk.Button(self.root, text=text, command=cmd, **self.button_params_main).grid(row=row, column=col, sticky="nsew")
+            tk.Button(self.root, text=text, command=cmd, **self.button_params_main).grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
 
     # ------------------- DISPLAY UPDATE -------------------
-    def update_display(self, value):
-        """Updates the display with the given value"""
-        self.text_input.set(value)
-        self.display.xview_moveto(1)
-
+    
+    def update_display(self, expression=None, result=None):
+        if expression is not None:
+            self.expression_var.set(expression)  # top label
+        if result is not None:
+            self.result_var.set(result)          # bottom label
