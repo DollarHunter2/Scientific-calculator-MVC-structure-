@@ -17,9 +17,9 @@ class CalculatorView:
             self.root,
             textvariable=self.expression_var,
             font=('sans-serif', 16),
-            fg="gray",
-            anchor='w',   # top-left alignment
-            bg="#FFFFFF"
+            fg="#7E7C7C",
+            anchor='se',   # top-left alignment
+            bg="#F4F1F1"
         )
         self.expression_label.grid(row=0, column=0, columnspan=6, sticky='ew', padx=15, pady=(15,0))
 
@@ -119,8 +119,8 @@ class CalculatorView:
 
     # ------------------- DISPLAY UPDATE -------------------
     
-    def update_display(self, expression=None, result=None):
-        if expression is not None:
-            self.expression_var.set(expression)  # top label
+    def update_display(self, result=None, pretty_expressions=None):
+        if pretty_expressions is not None:
+            self.expression_var.set(pretty_expressions)
         if result is not None:
-            self.result_var.set(result)          # bottom label
+            self.result_var.set(result)

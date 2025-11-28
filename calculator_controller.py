@@ -7,24 +7,24 @@ class CalculatorController:
         self.view = CalculatorView(root, self)
 
     # ------------------- BUTTON HANDLERS -------------------
-    def on_button_click(self, char):
-        value = self.model.add_to_expression(char)
-        self.view.update_display(result=value)
+    def on_button_click(self, char, pretty_char=None):
+        self.model.add_to_expression(char, pretty_char)
+        self.view.update_display(pretty_expressions=self.model.display_exp)  # only top label
+
 
     def on_clear(self):
         value = self.model.clear_all()
-        self.view.update_display(result=value)
+        self.view.update_display(pretty_expressions=value,result=value)
 
     def on_delete(self):
-        value = self.model.delete_last()
-        exp_value = self.model.clear_all()
-        self.view.update_display(result=value)
-        self.view.update_display(expression=exp_value)
+        self.model.clear_all()
+        self.view.update_display(pretty_expressions="", result="")
+
 
     def on_equal(self):
-        current_expr = self.model.expression  # save the current input
-        result = self.model.evaluate()        # evaluate it
-        self.view.update_display(expression=current_expr, result=result)
+        result = self.model.evaluate()  # calculate Python expression
+        self.view.update_display(pretty_expressions=self.model.display_exp, result=result)
+
 
 
     def on_enter(self, event=None):

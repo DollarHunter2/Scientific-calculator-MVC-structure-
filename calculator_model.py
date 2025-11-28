@@ -3,37 +3,68 @@ import math
 class CalculatorModel:
     def __init__(self):
         self.expression = ""
+        self.display_exp = ""
 
-    def add_to_expression(self, char):
-        self.expression += str(char)
+    def add_to_expression(self, char, pretty_char=None):
+        self.expression += str(char)  # Python-style expression
+
+        # Map to pretty display if not provided
+        if pretty_char is None:
+            mapping = {
+                '**2': '²',
+                '**3': '³',
+                '**(-1)': '⁻¹',
+                '10**': '10^',
+                '//': '÷',
+                '*': '×',
+                '-': '−',
+                '+': '+',
+                '%': '%'
+            }
+            pretty_char = mapping.get(str(char), str(char))
+
+        self.display_exp += pretty_char  # Book-style expression
         return self.expression
+
 
     def clear_all(self):
         self.expression = ""
         self.result=""
+        self.display_exp=""
         return self.expression
 
     def delete_last(self):
-        self.expression = self.expression[:-1]
+        if self.expression:
+            self.expression = self.expression[:-1]
+        if self.display_exp:
+            self.display_exp = self.display_exp[:-1]
         return self.expression
 
     def evaluate(self):
         try:
             result = str(eval(self.expression))
+            self.expression = result  # for next calculations
+            # Do NOT overwrite display_exp
             return result
         except Exception:
             self.expression = ""
+            self.display_exp = ""
             return "ERROR"
+
+      
 
     def factorial(self):
         try:
             value = int(self.expression)
             result = str(math.factorial(value))
             self.expression = result
+            self.display_exp = result
             return result
         except Exception:
             self.expression = ""
+            self.display_exp = ""
             return "ERROR"
+
 
     def trig_sin(self):
         return self._trig_func(math.sin)
