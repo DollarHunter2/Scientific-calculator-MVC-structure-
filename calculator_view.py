@@ -1,22 +1,8 @@
 #----------------------------calculatorView-------------------
 import tkinter as tk
 from PIL import Image, ImageTk 
-import os
+import re
 class CalculatorView:
-    def __init__(self, root,controller):
-        self.root = root
-        self.controller = controller
-        self.root.title("Scientific calculator")
-        self.root.configure(bg="#293C4A")
-        #----image loading into the calculator----
-       
-        img = Image.open(r"C:\Users\Cellusys CodeCamp\Desktop\Joe(vs project)\Scientific-calculator-MVC-structure-\assets sy\calculator image.png")
-        img = img.resize((80, 80 ), Image.LANCZOS)
-        self.logo = ImageTk.PhotoImage(img)
-        #-----create label------
-        self.logo_label = tk.Label(self.root , image = self.logo)
-        self.logo_label.grid(row = 0, column = 0, sticky = "nw", padx = 5, pady = 5 )
-        self.logo_label.image = self.logo
     def __init__(self, root, controller):
         self.root = root
         self.controller = controller
@@ -24,25 +10,15 @@ class CalculatorView:
         self.root.configure(bg="#19C6DD", bd=10)
         self.root.resizable(False, False)
 
-
-        # --- Display ---
+    
+# --- Display ---
         self.text_input = tk.StringVar()
-        self.display = tk.Entry(
-    self.root,
-    font=('sans-serif', 28, 'bold'),
-    textvariable=self.text_input,
-    bd=8,
-    insertwidth=6,
-    bg='#E0E0E0',
-    justify='right'
-)
-        self.display.grid(
-            row=0, column=0, columnspan=6,
-            padx=15, pady=25,
-            ipady=25, sticky="ew"
-        )       
+        self.display = tk.Entry(self.root, font=('sans-serif', 28, 'bold'), textvariable=self.text_input, bd=8, insertwidth=6, bg='#E0E0E0', justify='right')
+        self.display.grid(row=0, column=0, columnspan=6, padx=15, pady=25, ipady=25, sticky="ew")
+        # ensure row expands
+        self.root.grid_rowconfigure(0,weight =1)
+        self.root.grid_columnconfigure(0, weight =1)
         self.display.xview_moveto(1)
-
 
         # Button styles
         self.button_params = {'bd': 1, 'fg': "#000000", 'bg': "#6BBFE1", 'font': ('sans-serif', 20, 'italic')}
@@ -50,6 +26,14 @@ class CalculatorView:
 
         # Build all buttons
         self.create_buttons()
+    #-------------------------INPUT METHOD-------------------
+    def on_decimal(self):
+        """Add a decimal to current number if it doesnt exist yet"""
+        expr = self.controller.model.expression
+        last_number = re.split(r'[\+\-\*/\%\(\)]',expr)[-1]
+        if "." not in last_number:
+            self.controller.on_button_click(".")
+
 
     # ------------------- BUTTON CREATION -------------------
     def create_buttons(self):
@@ -63,10 +47,10 @@ class CalculatorView:
         add_btn('e', lambda: self.controller.on_button_click(str(2.71828)), 1, 4)
 
         # 2nd row
-        add_btn('sin', self.controller.on_sin, 2, 0)
-        add_btn('cos', self.controller.on_cos, 2, 1)
-        add_btn('tan', self.controller.on_tan, 2, 2)
-        add_btn('cot', self.controller.on_cot, 2, 3)
+        add_btn('sin',lambda: self.controller.on_button_click('sin('),2,0)
+        add_btn('cos',lambda: self.controller.on_button_click('cos('),2,1)
+        add_btn('tan', lambda:self.controller.on_button_click('tan('),2, 2)
+        add_btn('cot', lambda:self.controller.on_button_click('cot('),2,3)
         add_btn('π', lambda: self.controller.on_button_click(str(3.14159)), 2, 4)
 
         # 3rd row
@@ -116,6 +100,8 @@ class CalculatorView:
                 cmd = self.controller.temp_convert1
             elif text =="K-°C":
                 cmd = self.controller.temp_convert2
+            elif text ==".":
+                cmd = self.on_decimal #<----handles decimal
             else:
                 cmd = lambda t=text: self.controller.on_button_click(t)
             tk.Button(self.root, text=text, command=cmd, **self.button_params_main).grid(row=row, column=col, sticky="nsew")
@@ -123,5 +109,5 @@ class CalculatorView:
     # ------------------- DISPLAY UPDATE -------------------
     def update_display(self, value):
         """Updates the display with the given value"""
-        self.text_input.set(value)
+        self.text_input.set(str(value))
         self.display.xview_moveto(1)

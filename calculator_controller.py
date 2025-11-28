@@ -61,7 +61,8 @@ class CalculatorController:
         try:
             val = float(self.model.expression)
             result = val ** power
-            self.model.expression = str(result)
+            result = self.model.fmt(result)
+            self.model.expression = result
             self.view.update_display(result)
         except Exception:
             self.model.expression = ""
@@ -70,9 +71,9 @@ class CalculatorController:
             try:
                 val = float(self.model.expression)
                 result = 10 ** val
-                self.model.expression = str(result)
-                self.view.update_display(result)
-                self.view.update_display("ERROR")  
+                result = self.model.fmt(result)
+                self.model.expression = result
+                self.view.update_display(result) 
             except Exception:
                 self.model.expression = ""
                 self.view.update_display("ERROR")
@@ -81,8 +82,9 @@ class CalculatorController:
         try:
             val = float(self.model.expression)
             result = math.log10(val)
-            self.model.expression = str(result)
-            self.view.update_display("ERROR")
+            result =self.model.fmt(result)
+            self.model.expression = result
+            self.view.update_display(result)
         except Exception:
             self.model.expression = ""
             self.view.update_display("ERROR")
@@ -90,7 +92,8 @@ class CalculatorController:
         try:
             val = float(self.model.expression)
             result = math.log(val)
-            self.model.expression = str(result)
+            result = self.model.fmt(result)
+            self.model.expression = result
             self.view.update_display(result)
         except Exception:
             self.model.expression =""
@@ -101,7 +104,8 @@ class CalculatorController:
             n =sd.askfloat("Exponent","Enter the power n:")
             val = float(self.model.expression)
             result = val**n
-            self.model.expression = str(result)
+            result = self.model.fmt(result)   
+            self.model.expression = result
             self.view.update_display(result)
         except Exception:
             self.model.expression = ""
@@ -111,9 +115,9 @@ class CalculatorController:
         try:
             val = float(self.model.expression)
             val = -val
-            self.model.expression = str(val)
-            self.view.update_display(val)
-            self.view.update_display(val)
+            result = self.model.fmt(val)
+            self.model.expression = result
+            self.view.update_display(result)
         except Exception:
             self.model.expression = ""
             self.view.update_display("ERROR")
@@ -123,9 +127,9 @@ class CalculatorController:
         try:
             val = float(self.model.expression)
             val = val / 100
-            self.model.expression = str(val)
-            self.view.update_display(val)
-            self.view.update_display(val)
+            result = self.model.fmt(val)  
+            self.model.expression = result
+            self.view.update_display(result)
         except Exception:
             self.model.expression = ""
             self.view.update_display("ERROR")
@@ -135,14 +139,22 @@ class CalculatorController:
             n =sd.askfloat("n -th root","Enter the root n:")
             val = float(self.model.expression)
             result = val**(1/n)
-            self.model.expression = str(result)
+            result = self.model.fmt(result)
+            self.model.expression = result
             self.view.update_display(result)
         except Exception:
             self.model.expression = ""
             self.view.update_display("ERROR")
 
+    def on_modulo(self):
+        try:
+            result = eval(self.model.expression.replace('%','%')) #computes modulo
+            result= self.model.fmt(result)
+            self.model.expression = result
 
+            self.view.update_display(result)
+        except Exception:
+            self.model.expression = ""
+            self.view.update_display("ERROR")
 
-    def on_button_click(self, char):
-        self.model.expression += char
-        self.view.update_display(self.model.expression)
+    
