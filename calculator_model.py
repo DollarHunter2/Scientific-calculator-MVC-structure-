@@ -30,7 +30,7 @@ class CalculatorModel:
     def clear_all(self):
         self.expression = ""
         self.result=""
-        self.display_exp=""
+        self.display_exp=self.display_exp[:-1]
         return self.expression
 
     def delete_last(self):

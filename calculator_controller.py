@@ -17,8 +17,9 @@ class CalculatorController:
         self.view.update_display(pretty_expressions=value,result=value)
 
     def on_delete(self):
-        self.model.clear_all()
-        self.view.update_display(pretty_expressions="", result="")
+        value=self.model.clear_all()
+        value1=self.model.delete_last()
+        self.view.update_display(pretty_expressions=value,result=value1)
 
 
     def on_equal(self):

@@ -16,10 +16,10 @@ class CalculatorView:
         self.expression_label = tk.Label(
             self.root,
             textvariable=self.expression_var,
-            font=('sans-serif', 16),
-            fg="#7E7C7C",
+            font=('sans-serif', 28),
+            fg="#000000",
             anchor='se',   # top-left alignment
-            bg="#F4F1F1"
+            bg="#FFFFFF" 
         )
         self.expression_label.grid(row=0, column=0, columnspan=6, sticky='ew', padx=15, pady=(15,0))
 
