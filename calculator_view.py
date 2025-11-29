@@ -18,6 +18,10 @@ class CalculatorView:
         # ensure row expands
         self.root.grid_rowconfigure(0,weight =1)
         self.root.grid_columnconfigure(0, weight =1)
+        self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_columnconfigure(2, weight=1)
+        self.root.grid_columnconfigure(3, weight=1)
+        self.root.grid_columnconfigure(4, weight=1)
         self.display.xview_moveto(1)
 
         # Button styles
