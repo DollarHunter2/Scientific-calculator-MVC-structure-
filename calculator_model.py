@@ -1,5 +1,5 @@
 import math
-
+import re
 class CalculatorModel:
     def __init__(self):
         self.expression = ""
@@ -33,16 +33,6 @@ class CalculatorModel:
         self.expression = self.expression[:-1]
         return self.expression
 
-    # def evaluate(self):
-    #     """Evaluate the full expression"""
-    #     try:
-    #         result =(eval(self.expression,{"math" : math, "abs": abs}))
-    #         result =self.fmt(result)
-    #         self.expression = result
-    #     except Exception:
-    #         result = "ERROR"
-    #         self.expression = ""
-    #     return result
 
     def factorial(self):
         """Calculate factorial of current number"""
@@ -80,10 +70,32 @@ class CalculatorModel:
             self.expression = ""
             return "ERROR"
 
+        
+    def insert_implicit_multiplication(self, expr):
+            """
+            Insert * automatically in cases like:
+            - 6cos(9) → 6*cos(9)
+            - 3(4+5) → 3*(4+5)
+            - )sin(30) → )*sin(30)
+            """
+             # number followed by sin, cos, tan, cot
+            expr = re.sub(r'(\d)(sin|cos|tan|cot)', r'\1*\2', expr)
+    
+            # closing bracket followed by trig
+            expr = re.sub(r'(\))(sin|cos|tan|cot)', r'\1*\2', expr)
+    
+            # number followed by (
+            expr = re.sub(r'(\d)\(', r'\1*(', expr)
+            return expr
+
+
     def _trig_func(self, func):
         """Helper for sin, cos, tan"""
         try:
-            val = eval(self.expression)
+            
+            expr = self.insert_implicit_multiplication(self.expression)
+            val = eval(expr)
+        
             val = math.radians(float(val))
             result = func(val)
             result = self.fmt(result)
@@ -115,7 +127,8 @@ class CalculatorModel:
 
         try:
             # Evaluate expression using only allowed names and no builtins
-            result = eval(self.expression, {"__builtins__": {}}, allowed_names)
+            expr_fixed = self.insert_implicit_multiplication(self.expression)
+            result = eval(expr_fixed, {"__builtins__": {}}, allowed_names)
         except Exception:
             return "ERROR"
 
